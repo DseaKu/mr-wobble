@@ -40,6 +40,7 @@
   v4.5.0 and only `hal_espressif`. CI passes on GitHub (branch
   `zephyr-migration`, about 2.5 min). It fetches only the 9 ESP32-S3 blobs
   with retry (the blob server sometimes returns HTTP 504).
+- 2026-11-25: Add `CHANGELOG.md` (Keep a Changelog format, entries by date).
 - Note: the board file uses 8 MB flash. The N16R8 board has 16 MB. This is
   sufficient for now.
 
