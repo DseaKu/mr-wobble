@@ -1,0 +1,37 @@
+# Firmware (Zephyr) rules are in firmware/.gitignore.
+
+# --- Python (sim/) ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Training and logging output
+*.npz
+*.npy
+sim/runs/
+sim/logs/
+sim/plots/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Editors ---
+.vscode/
+.idea/
+.zed/
+*.swp
+*~
+
+# --- Local and secret settings ---
+.env
+.env.*
+.claude/settings.local.json

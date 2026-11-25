@@ -1,0 +1,20 @@
+# West manifest: pins the Zephyr version for this project.
+#
+# CI uses this file (see .github/workflows/build.yml).
+# Keep the local workspace (~/zephyrproject) on the same Zephyr revision.
+manifest:
+  self:
+    path: mr-wobble
+
+  remotes:
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: v4.5.0
+      import:
+        # Only the modules this project needs.
+        name-allowlist:
+          - hal_espressif

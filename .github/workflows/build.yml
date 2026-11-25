@@ -1,0 +1,55 @@
+name: Build firmware
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    env:
+      BOARD: esp32s3_devkitc/esp32s3/procpu
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          path: mr-wobble
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Set up Zephyr (west, modules, SDK)
+        uses: zephyrproject-rtos/action-zephyr-setup@v1
+        with:
+          app-path: mr-wobble
+          toolchains: xtensa-espressif_esp32s3_zephyr-elf
+
+      # Fetch only the ESP32-S3 blobs (9 of 73 files). The regex must match at
+      # the start of the path (re.match). The current firmware does not need
+      # the blobs; Wi-Fi and Bluetooth will. Retry, because the
+      # blob server sometimes returns HTTP 504.
+      - name: Fetch Espressif blobs (ESP32-S3 only)
+        run: |
+          for attempt in 1 2 3; do
+            west blobs fetch hal_espressif --allow-regex 'lib/esp32s3/' && exit 0
+            echo "Blob fetch failed (attempt $attempt). Retrying in 10 s."
+            sleep 10
+          done
+          exit 1
+
+      - name: Build
+        working-directory: mr-wobble
+        run: west build -b "$BOARD" -d build firmware
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v7
+        with:
+          name: firmware-${{ github.sha }}
+          path: |
+            mr-wobble/build/zephyr/zephyr.bin
+            mr-wobble/build/zephyr/zephyr.elf
+            mr-wobble/build/zephyr/.config
+          if-no-files-found: error
